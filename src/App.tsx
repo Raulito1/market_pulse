@@ -10,8 +10,51 @@ import { MarketCard } from './components/MarketCard';
 import { MainChart } from './components/MainChart';
 import { InsightsPanel, Insight } from './components/InsightsPanel';
 import { getMockMarketData, MarketTrend } from './services/marketData';
-import { getMarketInsights } from './services/gemini';
+import {
+  voiceOfClientData,
+  metaNarratives,
+  clientConcerns,
+  actionItems,
+  clientQuotes,
+  wordCloudWords,
+  callNoteTickers,
+  whatChangedItems,
+  crossSignalTrends,
+  advisorQuestions,
+  trendLeaderboard,
+  topTickerRows,
+  tradeAnalysisData,
+  emergingSignals,
+} from './services/clientData';
+import { VoiceOfClient } from './components/VoiceOfClient';
+import { MetaNarratives } from './components/MetaNarratives';
+import { ClientInsights } from './components/ClientInsights';
+import { CallNotes } from './components/CallNotes';
+import { MarketChanges } from './components/MarketChanges';
+import { WhatAdvisorsAreAsking } from './components/WhatAdvisorsAreAsking';
+import { ChartsAndData } from './components/ChartsAndData';
+import { TradeAnalysis } from './components/TradeAnalysis';
+import { EmergingSignals } from './components/EmergingSignals';
 import { motion, AnimatePresence } from 'motion/react';
+
+async function getMarketInsights(marketData: MarketTrend[]): Promise<Omit<Insight, 'id'>[]> {
+  await new Promise(resolve => setTimeout(resolve, 800));
+  const top = marketData[0];
+  return [
+    {
+      title: 'Momentum Signal',
+      description: `${top?.symbol ?? 'BTC'} is showing strong upward momentum with volume 23% above its 30-day average.`,
+    },
+    {
+      title: 'Volatility Alert',
+      description: 'Market volatility has increased this week. Consider tightening stop-loss levels on open positions.',
+    },
+    {
+      title: 'Correlation Shift',
+      description: 'BTC-ETH correlation dropped to 0.62 — lowest in 90 days — suggesting diverging market narratives.',
+    },
+  ];
+}
 
 export default function App() {
   const [marketData, setMarketData] = useState<MarketTrend[]>([]);
@@ -156,6 +199,36 @@ export default function App() {
             />
           </div>
         </div>
+
+        {/* What Advisors Are Asking */}
+        <WhatAdvisorsAreAsking
+          questions={advisorQuestions}
+          totalInvestmentRelevant={advisorQuestions.reduce((s, q) => s + q.investmentRelevant, 0)}
+        />
+
+        {/* Charts & Data */}
+        <ChartsAndData leaderboard={trendLeaderboard} topTickers={topTickerRows} />
+
+        {/* Trade Analysis Revision */}
+        <TradeAnalysis data={tradeAnalysisData} />
+
+        {/* Emerging Signals */}
+        <EmergingSignals signals={emergingSignals} />
+
+        {/* Voice of the Client */}
+        <VoiceOfClient data={voiceOfClientData} />
+
+        {/* Meta-Narratives */}
+        <MetaNarratives narratives={metaNarratives} />
+
+        {/* Client Concerns + Action Items */}
+        <ClientInsights concerns={clientConcerns} actionItems={actionItems} />
+
+        {/* Client Quotes + Word Cloud + Top Tickers */}
+        <CallNotes quotes={clientQuotes} wordCloud={wordCloudWords} tickers={callNoteTickers} />
+
+        {/* What Changed + Cross-Signal Trends */}
+        <MarketChanges whatChanged={whatChangedItems} crossSignals={crossSignalTrends} />
 
         {/* Footer Stats Bar */}
         <footer className="border-t border-border pt-8 pb-12">
